@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use BioTalk-3D, please cite the corresponding paper."
+title: "BioTalk-3D"
+type: dataset
+version: 1.0.0
+date-released: 2026-07-14
+repository-code: "https://github.com/2002zym/BioTalk-3D"
+
+authors:
+  Yiming Zhao, Weichen Dai, Shenzhou Chen, Li Zhu, Yu xuan Huang, Ruixun Yu, Chen Liang, Jin Peng, Wensheng Liu, Beilin Li, Wanzeng Kong
+
+preferred-citation:
+  type: conference-paper
+  title: "BioTalk-3D: A Synchronized EEG, Audio, and Blendshape Dataset and Benchmark for 3D Facial Animation"
+  authors:
+    Yiming Zhao, Weichen Dai, Shenzhou Chen, Li Zhu, Yu xuan Huang, Ruixun Yu, Chen Liang, Jin Peng, Wensheng Liu, Beilin Li, Wanzeng Kong
+  conference:
+    name: "PRCV 2026"
+  year: 2026
