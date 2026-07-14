@@ -166,18 +166,6 @@ The public release does not include:
 
 The full dataset is hosted on Baidu Netdisk because of its size.
 
-Before downloading or using the dataset, please read:
-
-- [English dataset card](DATA_CARD_en.md)
-- [Chinese dataset card](DATA_CARD_zh.md)
-- [English ethics and consent statement](ETHICS_en.md)
-- [Chinese ethics and consent statement](ETHICS_zh.md)
-- [English rendering protocol](RENDERING_en.md)
-- [Chinese rendering protocol](RENDERING_zh.md)
-- [Dataset terms of use](DATA_LICENSE.md)
-
-If the download link becomes unavailable, please open a GitHub issue.
-
 ## Repository File Map
 
 | File | Description |
