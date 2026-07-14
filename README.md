@@ -2,14 +2,17 @@
 
 Official repository for **BioTalk-3D: A Synchronized EEG, Audio, and Blendshape Dataset and Benchmark for 3D Facial Animation**.
 
-BioTalk-3D is a multimodal dataset for physiology-aware speech-driven 3D facial animation. It contains temporally aligned scalp electrophysiological recordings, speech audio, ARKit blendshape coefficients, and ground-truth mesh-rendering videos.
+BioTalk-3D is a multimodal dataset for physiology-aware speech-driven
+3D facial animation. Its public release contains preprocessed session-level
+scalp electrophysiological recordings, segmented utterance-level
+electrophysiological arrays, speech audio, ARKit blendshape coefficients,
+and ground-truth mesh-rendering videos.
 
 > **Signal interpretation.** The released scalp electrophysiological recordings were acquired during speech and may contain mixed brain-related, ocular, facial-muscle, movement, and articulation-related components. They should not be interpreted as isolated or artifact-free neural activity.
 
 ## News
 
 - **[RELEASE_DATE]:** BioTalk-3D v1.0.0 released.
-- **[ACCEPTANCE_DATE]:** The BioTalk-3D paper was accepted by PRCV 2026.
 
 ## Dataset Overview
 
@@ -61,19 +64,17 @@ Detailed processing and quality-control records are included in the release pack
 
 ## Public Release Scope
 
+> **Release boundary.** Original raw EEG acquisition files (`*.cnt`) are
+> not publicly released. The publicly released EEG data consist of
+> preprocessed session-level files (`*.set` and paired `.fdt` files when
+> present) and segmented utterance-level arrays (`*_eeg.npy`).
+
 ### Included
 
 The public release includes the following data and artifacts.
 
-#### 1. Raw continuous EEG recordings
 
-Raw continuous acquisition files:
-
-- `*.cnt`
-
-These files contain the original continuous 64-channel scalp electrophysiological recordings collected during each recording session.
-
-#### 2. Preprocessed session-level EEG
+#### 1. Preprocessed session-level EEG
 
 Preprocessed continuous EEG session files:
 
@@ -91,7 +92,7 @@ The preprocessing pipeline includes:
 
 Speech-related ocular, myogenic, movement, and articulation-related components are not necessarily removed.
 
-#### 3. Segmented utterance-level EEG
+#### 2. Segmented utterance-level EEG
 
 Utterance-aligned EEG arrays:
 
@@ -99,13 +100,13 @@ Utterance-aligned EEG arrays:
 
 Each segmented EEG sample is temporally aligned with the corresponding speech waveform and ARKit blendshape sequence.
 
-#### 4. Segmented speech audio
+#### 3. Segmented speech audio
 
 Utterance-level audio files:
 
 - `*.wav`
 
-#### 5. Ground-truth ARKit blendshape coefficients
+#### 4. Ground-truth ARKit blendshape coefficients
 
 Utterance-level ground-truth blendshape arrays:
 
@@ -113,7 +114,7 @@ Utterance-level ground-truth blendshape arrays:
 
 Each array stores the temporally aligned ARKit blendshape sequence for one utterance.
 
-#### 6. Ground-truth rendering videos
+#### 5. Ground-truth rendering videos
 
 Ground-truth mesh-rendering videos are provided under:
 
@@ -127,7 +128,7 @@ They are:
 - not original participant face videos;
 - not generated from EEG.
 
-#### 7. Metadata, splits, and processing records
+#### 6. Metadata, splits, and processing records
 
 The release also includes:
 
@@ -143,6 +144,7 @@ The release also includes:
 
 The public release does not include:
 
+- raw EEG acquisition files (`*.cnt`);
 - original RGB or TrueDepth participant face videos;
 - participant names or identity mappings;
 - consent forms;
@@ -156,11 +158,11 @@ The public release does not include:
 
 ### BioTalk-3D v1.0.0
 
-- **Baidu Netdisk:** [Download the full dataset]([BAIDU_NETDISK_URL])
-- **Extraction code:** `[EXTRACTION_CODE]`
+- **Baidu Netdisk:** [Download the full dataset](https://pan.baidu.com/s/17m1xekiNR08e_CIgu-0Tbg?pwd=em25)
+- **Extraction code:** `em25`
 - **Version:** v1.0.0
-- **Release date:** [RELEASE_DATE]
-- **Approximate size:** [DATASET_SIZE]
+- **Release date:** 2026-07-15
+- **Approximate size:** 18.05 GB
 
 The full dataset is hosted on Baidu Netdisk because of its size.
 
@@ -193,35 +195,6 @@ If the download link becomes unavailable, please open a GitHub issue.
 | `CITATION.cff` | Machine-readable citation metadata |
 | `CHANGELOG.md` | Dataset version history |
 
-## Recommended Dataset Directory Structure
-
-```text
-BioTalk-3D_v1.0.0/
-├── README.md
-├── README_en.md
-├── README_zh.md
-├── DATA_CARD_en.md
-├── DATA_CARD_zh.md
-├── ETHICS_en.md
-├── ETHICS_zh.md
-├── RENDERING_en.md
-├── RENDERING_zh.md
-├── DATA_LICENSE.md
-├── metadata/
-├── splits/
-├── processing_records/
-├── S1/
-│   ├── raw_eeg/
-│   ├── preprocessed_eeg/
-│   ├── EATalker/
-│   └── render_demo/
-├── S2/
-├── S3/
-├── S4/
-└── S5/
-```
-
-Each public participant directory should use an anonymized identifier such as `S1`–`S5`.
 
 ## Subject-Level Data
 
@@ -229,12 +202,10 @@ Each subject directory contains:
 
 ```text
 S1/
-├── raw_eeg/
-│   └── *.cnt
 ├── preprocessed_eeg/
 │   ├── *.set
 │   └── *.fdt
-├── EATalker/
+├── BioTalk/
 │   ├── audio/
 │   │   └── *.wav
 │   ├── blendshape/
@@ -268,7 +239,6 @@ S1_session01_sentence0001_eeg.npy
 | `*.wav` | Segmented speech waveform |
 | `*_bs.npy` | Ground-truth ARKit blendshape sequence |
 | `*_eeg.npy` | Temporally aligned segmented EEG |
-| `*.cnt` | Raw continuous EEG acquisition recording |
 | `*.set` | Preprocessed EEGLAB session file |
 | `*.fdt` | External binary data paired with a `.set` file |
 | `*.mp4` | Ground-truth mesh-rendering video |
@@ -347,7 +317,7 @@ These files are provided for transparency and reproducibility. They are not requ
 Clone the repository:
 
 ```bash
-git clone https://github.com/[GITHUB_USERNAME]/BioTalk-3D.git
+git clone https://github.com/2002zym/BioTalk-3D.git
 cd BioTalk-3D
 ```
 
@@ -432,8 +402,7 @@ Researchers should recognize that:
 
 Ethics approval information:
 
-- **Institution:** [ETHICS_INSTITUTION]
-- **Approval number:** [ETHICS_APPROVAL_NUMBER]
+- **Approval number:** Available upon reasonable request
 
 See `ETHICS_en.md` and `ETHICS_zh.md` for additional details.
 
@@ -456,7 +425,7 @@ If you use BioTalk-3D, please cite:
 ```bibtex
 @inproceedings{biotalk3d2026,
   title     = {BioTalk-3D: A Synchronized EEG, Audio, and Blendshape Dataset and Benchmark for 3D Facial Animation},
-  author    = {[AUTHOR_LIST]},
+  author    = {Yiming Zhao, Weichen Dai, Shenzhou Chen, Li Zhu, Yu xuan Huang, Ruixun Yu, Chen Liang, Jin Peng, Wensheng Liu, Beilin Li, Wanzeng Kong},
   booktitle = {Proceedings of the Chinese Conference on Pattern Recognition and Computer Vision},
   year      = {2026}
 }
@@ -483,7 +452,7 @@ Please cite relevant upstream projects when using their code, mesh assets, rende
 
 For questions, bug reports, access problems, or broken download links, please open an issue in this repository.
 
-- **Project page:** https://github.com/[GITHUB_USERNAME]/BioTalk-3D
-- **Maintainer:** [MAINTAINER_NAME]
-- **Institution:** [MAINTAINER_INSTITUTION]
-- **Email:** [MAINTAINER_EMAIL]
+- **Project page:** https://github.com/2002zym/BioTalk-3D
+- **Maintainer:** Alan 
+- **Institution:** Hangzhou Dianzi university
+- **Email:** weichendai@hdu.edu.cn
