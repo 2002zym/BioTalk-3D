@@ -10,21 +10,6 @@ and ground-truth mesh-rendering videos.
 
 > **Signal interpretation.** The released scalp electrophysiological recordings were acquired during speech and may contain mixed brain-related, ocular, facial-muscle, movement, and articulation-related components. They should not be interpreted as isolated or artifact-free neural activity.
 
-## Benchmark Code
-
-The original EATalker project code is included in this **Biotalk-3D** repository. Existing module names, configuration keys, and dataset identifiers retain `EATalker` for compatibility.
-
-- Model: [`models/eatalker.py`](models/eatalker.py)
-- EEG encoder: [`models/eeg_encoder.py`](models/eeg_encoder.py)
-- Audio/EEG fusion: [`models/multimodal_fusion.py`](models/multimodal_fusion.py)
-- Training entry point: [`main/train_eatalker.py`](main/train_eatalker.py)
-- Configuration: [`config/eatalker.yaml`](config/eatalker.yaml)
-- Processing and evaluation: [`tools/`](tools/)
-
-This code snapshot comes from the original EATalker working tree, including its local code updates. Existing configuration paths refer to the development environment and must be adapted before training. Development configurations may describe earlier dataset versions and should not be assumed to match the public release statistics below.
-
-This upload contains source code, configuration, tests, scripts, and mesh templates. Datasets, EEG/audio samples, development split manifests, internal documentation, manuscript archives, generated analyses, pretrained weights, dataset symlinks, Python caches, training outputs, and installation wheels are excluded. Obtain required external assets separately. See [`LICENSE`](LICENSE) for code licensing and [`DATA_LICENSE.md`](DATA_LICENSE.md) for dataset terms.
-
 ## News
 
 - **[RELEASE_DATE]:** BioTalk-3D v1.0.0 released.
