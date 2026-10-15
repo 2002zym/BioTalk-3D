@@ -1,0 +1,132 @@
+# EATalker配置文件 - 支持传统EEGNet和音频双模态输入
+# 基于UniTalker配置扩展，使用传统EEGNet架构
+
+DATA:
+  # 使用EATalker数据集（支持ARKit 51维blendshape，模仿D6格式）
+  dataset: "EATalker"
+  # demo_dataset: "D0,D1,D2,D3,D4,D6,D7" # To visualize D5,  please download FLAME2020 model first and place it in "resources/binary_resources/flame.pkl"
+  demo_dataset: "EATalker" #EATalker
+  data_root: "/home/zym/EATalker/EATalker_data_template" #" 当前数据路径/home/zym/EATalker/EATalker_data_template
+  duplicate_list: "1"  # 新数据集不需要重复
+  train_json_key: train.json
+  use_cached_features: False
+  cache_manifest: ""
+
+LOSS:
+  rec_weight: 1.0
+  pca_weight: 0.0  # EATalker不使用PCA损失
+  blendshape_weight: 0.05
+  mouth_param_weight: 4.0  # 口型相关维度的参数损失权重（不改GT，直接加权）
+  # 口型顶点额外权重：把“嘴部区域”的 vertex 误差提到更重要（解决嘴动幅度/细节被全脸均值淹没）
+  mouth_vertex_weight: 0.4
+  # 口型动态约束（BS 空间）：更直接约束开合节奏与细节（只作用在口型维度）
+  mouth_velocity_loss_weight: 0.002
+  mouth_acceleration_loss_weight: 0.001
+  # 口型“欠幅”惩罚：只在 pred 的口型变化幅度（std）小于 GT 时施加惩罚
+  mouth_under_std_weight: 0.1
+  velocity_loss_weight: 0.0000  # 轻微约束节奏，避免过度抑制幅度
+  acceleration_loss_weight: 0.000  # 适度平滑，避免明显抖动
+
+
+NETWORK:
+  use_pca: False  # EATalker不使用PCA，直接输出51维blendshape
+  pca_dim: 512  # 保留但无效
+
+MODEL:
+  # 音频编码器配置 - 使用本地 wav2vec2-large-xlsr-53（1024 维），保持与 UniTalker 预训练权重一致
+  audio_encoder_repo: '/home/zym/.cache/huggingface/hub/models--facebook--wav2vec2-large-xlsr-53/snapshots/c3f9d884181a224a6ac87bf8885c84d1cff3384f'
+  audio_encoder_feature_dim: 1024  # 默认沿用 Wav2Vec2 输出维度，要与音频编码器对应
+  freeze_wav2vec: True
+  # middle-route：仅微调 Transformer 最后 N 层（0=不启用）
+  wav2vec_train_last_n_layers: 12
+  # 音频编码器学习率（可选）；为 null 时使用默认策略：
+  # - middle-route(last_n>0)：默认 base_lr * 0.01（更稳，防遗忘）
+  # - full fine-tune(last_n==0 且 freeze_wav2vec=False)：默认 base_lr
+  wav2vec_lr: 0.000005
+  # EEG/fusion 分支学习率倍率（相对 TRAIN.lr）；用于小样本稳定微调
+  eeg_fusion_lr_scale: 10.0
+  # 其余未分组参数的学习率倍率；默认与 EEG/fusion 一致
+  other_lr_scale: 10.0
+  # 训练时将冻结的 audio encoder 强制置为 eval()（关闭 dropout/spec-augment），仅最后 N 层保持 train()
+  wav2vec_frozen_to_eval: True
+  use_audio: True
+  interpolate_pos: 1
+  decoder_dimension: 256
+  decoder_type: conv  # choose from conv and transformer
+  period: 30
+  headlayer: 1
+  
+  # EEGNet编码器配置 - 基于传统EEGNet架构
+  use_eeg: False  # 是否使用EEGNet编码器
+  eeg_channels: 60  # EEG通道数（实际数据为60通道）
+  eeg_length: 256  # 输入序列长度（时间点）
+  eeg_output_dim: 128  # EEGNet编码器输出维度
+  eeg_dropout: 0.5  # EEGNet的dropout率
+  
+  # 传统EEGNet核心参数
+  eeg_kernel_length: 64  # 第一卷积层核长度（时间卷积）
+  eeg_kernel_length2: 16  # 第二卷积层核长度（可分离卷积）
+  eeg_F1: 8  # 第一卷积层滤波器数
+  eeg_D: 2  # 深度乘子（控制深度卷积的扩展）
+  eeg_F2: 16  # 第二卷积层滤波器数
+  
+  # LSTM配置
+  eeg_use_lstm: False  # 是否使用LSTM进行时序建模
+  eeg_lstm_hidden: 64  # LSTM隐藏层维度
+  
+  # 训练配置
+  freeze_eegnet: False  # 是否冻结EEGNet参数
+  
+  # 多模态融合配置
+  fusion_hidden_dim: 128  # 融合模块隐藏层维度
+  fusion_num_heads: 2  # 注意力头数（减少过拟合风险）
+  fusion_alpha_mode: scalar  # scalar 或 vector
+  fusion_alpha_init: 0.0  # alpha=0 时严格退化为 audio-only
+  identity_policy: per_id  # per_id 或 global
+
+DEMO:
+  template_idx_map:
+    EATalker: 0 # liu 的模板，若要切换 pj 等身份，可以在此配置
+  condition_idx_map:
+    EATalker: 0  # liu 的 identity，可通过命令行 --condition_id 覆盖
+
+TRAIN:
+  fix_encoder_first: False
+  random_id_prob: 0.0
+  re_init_decoder_and_head: False
+  only_head: False
+  train_stage: joint  # joint / stage1 / stage2
+  stage2_decoder_last_k: 0  # 0=解冻全部decoder
+  stage2_unfreeze_head: True
+  identity_num_override: 0  # >0 时覆盖从数据集读取的 identity_num
+  w_lve: 0.02  # 口唇顶点区域 L1（与评估 LVE 索引一致）
+  w_ufve: 0.02  # 上半脸顶点区域 L1（与评估 UFVE 索引一致）
+  # 可选：用 UniTalker 预训练中 D6 的 identity embedding 行来初始化当前的身份嵌入。
+  # UniTalker-L-D0-D7 的 embedding 表是 (935,64)，其中 D6 subjects=8，
+  # 在 D0-D7 顺序下 D6 的全局索引范围约为 915-922（0-based）。
+  # 这里示例选取 D6 的两个相邻身份（919/920）来初始化 liu/pj 两行。
+  style_emb_init_indices: [919, 920]
+  workers: 4  # data loader workers
+  batch_size: 1  # batch size for training (per GPU)
+  batch_size_val: 1  # batch size for validation during training, memory and speed tradeoff
+  gradient_accumulation_steps: 1  # 梯度累积步数；用命令行覆盖以获得更大等效 batch
+  mouth_gain: 1.0  # 不改GT，仅通过loss权重强调口型
+  lr: 0.0001
+  epochs: 30
+  save_every: 1
+  save_path: "/home/zym/experiments/results"  # 实验结果保存路径
+  weight_path: /home/zym/pretrained_models/UniTalker-L-D0-D7.pt #"/home/zym/pretrained_models"
+  eval_every: 1
+  test_every: 1
+  log_every: 1
+  do_validate: False
+  do_test: True
+
+TEST:
+  test_wav_dir: "/home/zym/EATalker/test_audios"  # 测试音频目录
+  test_out_path: "/home/zym/experiments/test_results/test_demo.npz"
+  test_eeg_dir: "./test_eeg"  # EEG测试数据目录
+
+RUN:
+  best_ckpt_score_metrics: [MVE, LVE, UFVE, FDD]
+  best_ckpt_score_weights: {MVE: 0.20, LVE: 0.15, UFVE: 0.35, FDD: 0.30}
